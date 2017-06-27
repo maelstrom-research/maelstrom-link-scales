@@ -27,22 +27,27 @@ requireNamespace("DT", quietly=TRUE) # for dynamic tables
 # ---- declare-globals ---------------------------------------------------------
 # link to the source of the location mapping
 # path_input <- "./data-unshared/raw/Location_Map_Detailed_2017-05-23.csv"
-# path_input <- "./legacy/memory-scale-coverage-IALSA.csv"
-path_input <- "./legacy/processing-speed-coverage.csv"
+path_input <- "./legacy/memory-scale-coverage-IALSA.csv"
+# path_input <- "./legacy/processing-speed-coverage.csv"
 # test whether the file exists / the link is good
 testit::assert("File does not exist", base::file.exists(path_input))
 # declare where you will store the product of this script
-path_save <- "./data-unshared/derived/memory"
+# path_save <- "./data-unshared/derived/memory"
+path_save <- "./data-unshared/derived/processing-speed"
 # See definitions of commonly  used objects in:
 source("./manipulation/object-glossary.R")   # object definitions
 path_save_meta <- "./data-unshared/meta/perceptual_spead-live.csv"
 path_input_meta <- "./data-public/meta/perceptual_speed-dead.csv"
+
+# path_save_meta <- "./data-unshared/meta/memory-live.csv"
+# path_input_meta <- "./data-public/meta/memory-dead.csv"
 
 # ---- utility-functions ----------------------------------------------------- 
 # functions, the use of which is localized to this script
 
 # ---- load-data ---------------------------------------------------------------
 ds <- readr::read_csv(path_input) %>% as.data.frame() 
+ds <- ds %>% tibble::as_tibble()
 # ds <- readr::read_csv(path_input) %>% as.data.frame() 
 
 # ---- inspect-data -----------------------------------------------------------
@@ -60,7 +65,7 @@ ds_long %>% head()
 # save unique measure names 
 ds_long %>% 
   dplyr::distinct(measure) %>% 
-  readr::write_csv(save_raw_meta) 
+  readr::write_csv(path_save_meta) 
 # edit the meta data spreadsheed manually and save it in data-public/meta
 ds_meta  <- readr::read_csv(path_input_meta)
 # augemnt the long file with meta data
@@ -72,8 +77,8 @@ ds_long <- ds_long %>%
 
 
 # ---- save-to-disk ----------------
-saveRDS(ds, paste0(path_save,".rds"))
-readr::write_csv(ds, paste0(path_save,".csv"))
+saveRDS(ds_long, paste0(path_save,".rds"))
+readr::write_csv(ds_long, paste0(path_save,".csv"))
 
 
 
